@@ -21,3 +21,16 @@ sed -i "s/UPSTREAM_DNS/${UPSTREAM_DNS}/"    /etc/nginx/sites-available/upstream.
 sed -i "s/UPSTREAM_DNS/${UPSTREAM_DNS}/"    /etc/nginx/stream-available/10_sni.conf
 sed -i "s/LOG_FORMAT/${NGINX_LOG_FORMAT}/"  /etc/nginx/sites-available/10_cache.conf
 sed -i "s/LOG_FORMAT/${NGINX_LOG_FORMAT}/"  /etc/nginx/sites-available/20_upstream.conf
+
+if [[ ! -z "${CACHE_FORCE_UPSTREAM}" ]]; then
+    sed -i 's%proxy_pass http://$host%proxy_pass http://'"${CACHE_FORCE_UPSTREAM}%" /etc/nginx/sites-available/cache.conf.d/20_lol.conf
+    sed -i 's%proxy_pass http://$host%proxy_pass http://'"${CACHE_FORCE_UPSTREAM}%" /etc/nginx/sites-available/cache.conf.d/21_arenanet_manifest.conf
+    sed -i 's%proxy_pass http://$host%proxy_pass http://'"${CACHE_FORCE_UPSTREAM}%" /etc/nginx/sites-available/cache.conf.d/22_wsus_cabs.conf
+    sed -i 's%proxy_pass http://$host%proxy_pass http://'"${CACHE_FORCE_UPSTREAM}%" /etc/nginx/sites-available/upstream.conf.d/30_primary_proxy.conf
+
+    sed -i 's%#CACHE_FORCE_UPSTREAM_HEADER%proxy_set_header Host $host;%' /etc/nginx/sites-available/cache.conf.d/20_lol.conf
+    sed -i 's%#CACHE_FORCE_UPSTREAM_HEADER%proxy_set_header Host $host;%' /etc/nginx/sites-available/cache.conf.d/21_arenanet_manifest.conf
+    sed -i 's%#CACHE_FORCE_UPSTREAM_HEADER%proxy_set_header Host $host;%' /etc/nginx/sites-available/cache.conf.d/22_wsus_cabs.conf
+    sed -i 's%#CACHE_FORCE_UPSTREAM_HEADER%proxy_set_header Host $host;%' /etc/nginx/sites-available/upstream.conf.d/30_primary_proxy.conf
+fi
+
